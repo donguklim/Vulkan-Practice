@@ -1,9 +1,9 @@
 ﻿#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+#include  <vector>
 #include <iostream>
-#include <format>
-#include <stdexcept>
+
 #include <cstdlib>
 #include "render.h"
 
@@ -44,9 +44,23 @@ private:
     }
 
     void cleanup() {
+        vkDestroyInstance(instance, nullptr);
         glfwDestroyWindow(window);
         glfwTerminate();
 
+    }
+
+    void listExtensions() {
+        uint32_t extensionCount = 0;
+        vk_check(vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr));
+        std::vector<VkExtensionProperties> extensions(extensionCount);
+        vk_check(vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data()));
+
+        std::cout << "available extensions:\n";
+
+        for (const auto& extension : extensions) {
+            std::cout << '\t' << extension.extensionName << '\n';
+        }
     }
 
     void createInstance() {
@@ -62,14 +76,26 @@ private:
         createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
         createInfo.pApplicationInfo = &appInfo;
 
-        uint32_t glfwExtensionCount = 0;
-        const char** glfwExtensions;
+        /* 
+            // list available extensions and extensions required by glfw
+            listExtensions();
 
-        glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+            std::cout << "\nextensions requried by glfw:\n";
+            uint32_t glfwExtensionCount = 0;
+            const char** glfwExtensions;
 
-        createInfo.enabledExtensionCount = glfwExtensionCount;
-        createInfo.ppEnabledExtensionNames = glfwExtensions;
+            glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 
+            for (int i = 0; i < glfwExtensionCount; i++)
+            {
+                std::cout << '\t' << glfwExtensions[i] << '\n';
+            }
+
+            createInfo.enabledExtensionCount = glfwExtensionCount;
+            createInfo.ppEnabledExtensionNames = glfwExtensions;
+        
+        */
+        
         createInfo.enabledLayerCount = 0;
         vk_check(vkCreateInstance(&createInfo, nullptr, &instance));																	
 
