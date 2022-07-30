@@ -88,8 +88,8 @@ private:
     void initVulkan() {
         createInstance();
         setupDebugMessenger();
-        pickPhysicalDevice();
         createSurface();
+        pickPhysicalDevice();
         createLogicalDevice();
     }
 
