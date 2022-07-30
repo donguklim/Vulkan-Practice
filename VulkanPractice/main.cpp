@@ -110,6 +110,7 @@ private:
         createLogicalDevice();
         createSwapChain();
         createImageViews();
+        createGraphicsPipeline();
     }
 
     void mainLoop() {
@@ -505,6 +506,10 @@ private:
 
             vk_check(vkCreateImageView(device, &createInfo, nullptr, &swapChainImageViews[i]));
         }
+
+    }
+
+    void createGraphicsPipeline() {
 
     }
 
