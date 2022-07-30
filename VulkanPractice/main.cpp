@@ -64,6 +64,9 @@ private:
     VkQueue graphicsQueue;
     VkQueue presentQueue;
     VkSwapchainKHR swapChain;
+    VkFormat swapChainImageFormat;
+    VkExtent2D swapChainExtent;
+    std::vector<VkImage> swapChainImages;
 
     struct QueueFamilyIndices {
         std::optional<uint32_t> graphicsFamily;
@@ -466,6 +469,12 @@ private:
         createInfo.oldSwapchain = VK_NULL_HANDLE;
 
         vk_check(vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapChain));
+        
+        swapChainImageFormat = surfaceFormat.format;
+        swapChainExtent = extent;
+        vk_check(vkGetSwapchainImagesKHR(device, swapChain, &imageCount, nullptr));
+        swapChainImages.resize(imageCount);
+        vk_check(vkGetSwapchainImagesKHR(device, swapChain, &imageCount, swapChainImages.data()));
 
     }
 
