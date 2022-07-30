@@ -56,6 +56,7 @@ private:
     VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
     VkDevice device;
     VkQueue graphicsQueue;
+    VkSurfaceKHR surface;
 
     struct QueueFamilyIndices {
         std::optional<uint32_t> graphicsFamily;
@@ -87,6 +88,8 @@ private:
         createInstance();
         setupDebugMessenger();
         pickPhysicalDevice();
+        createSurface();
+        createLogicalDevice();
     }
 
     void mainLoop() {
@@ -101,6 +104,7 @@ private:
             DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
         }
 
+        vkDestroySurfaceKHR(instance, surface, nullptr);
         vkDestroyInstance(instance, nullptr);
         glfwDestroyWindow(window);
         glfwTerminate();
@@ -288,6 +292,10 @@ private:
         vk_check(vkCreateDevice(physicalDevice, &createInfo, nullptr, &device));
         vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
 
+    }
+
+    void createSurface() {
+        vk_check(glfwCreateWindowSurface(instance, window, nullptr, &surface));
     }
 
 };
