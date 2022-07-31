@@ -94,6 +94,10 @@ private:
     VkCommandPool commandPool;
     VkCommandBuffer commandBuffer;
 
+    VkSemaphore imageAvailableSemaphore;
+    VkSemaphore renderFinishedSemaphore;
+    VkFence inFlightFence;
+
     struct QueueFamilyIndices {
         std::optional<uint32_t> graphicsFamily{};
         std::optional<uint32_t> presentFamily{};
@@ -140,15 +144,20 @@ private:
         createFramebuffers();
         createCommandPool();
         createCommandBuffer();
+        createSyncObjects();
     }
 
     void mainLoop() {
         while (!glfwWindowShouldClose(window)) {
             glfwPollEvents();
+            drawFrame();
         }
     }
 
     void cleanup() {
+        vkDestroySemaphore(device, imageAvailableSemaphore, nullptr);
+        vkDestroySemaphore(device, renderFinishedSemaphore, nullptr);
+        vkDestroyFence(device, inFlightFence, nullptr);
         vkDestroyCommandPool(device, commandPool, nullptr);
         for (auto framebuffer : swapChainFramebuffers) {
             vkDestroyFramebuffer(device, framebuffer, nullptr);
@@ -808,6 +817,22 @@ private:
 
         vkCmdEndRenderPass(commandBuffer);
         vk_check(vkEndCommandBuffer(commandBuffer));
+
+    }
+
+    void createSyncObjects() {
+        VkSemaphoreCreateInfo semaphoreInfo{};
+        semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+        VkFenceCreateInfo fenceInfo{};
+        fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+
+        vk_check(vkCreateSemaphore(device, &semaphoreInfo, nullptr, &imageAvailableSemaphore));
+        vk_check(vkCreateSemaphore(device, &semaphoreInfo, nullptr, &renderFinishedSemaphore));
+        vk_check(vkCreateFence(device, &fenceInfo, nullptr, &inFlightFence));
+    }
+
+    void drawFrame() {
 
     }
 
