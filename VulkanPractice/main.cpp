@@ -132,8 +132,8 @@ private:
         createLogicalDevice();
         createSwapChain();
         createImageViews();
-        createGraphicsPipeline();
         createRenderPass();
+        createGraphicsPipeline();
     }
 
     void mainLoop() {
@@ -527,7 +527,7 @@ private:
             createInfo.subresourceRange.baseArrayLayer = 0;
             createInfo.subresourceRange.layerCount = 1;
 
-            vk_check((vkCreateImageView(device, &createInfo, nullptr, &swapChainImageViews[i]));
+            vk_check(vkCreateImageView(device, &createInfo, nullptr, &swapChainImageViews[i]));
         }
 
     }
