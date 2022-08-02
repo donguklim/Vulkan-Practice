@@ -147,7 +147,7 @@ private:
     };
 
     const std::vector<uint16_t> vertex_indices = {
-    0, 1, 2, 2, 3, 0
+        0, 1, 2, 2, 3, 0
     };
 
     struct QueueFamilyIndices {
@@ -306,8 +306,8 @@ private:
     void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size, VkFence fence=VK_NULL_HANDLE) {
 
         if (fence != VK_NULL_HANDLE) {
-            vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
-            vkResetFences(device, 1, &inFlightFences[currentFrame]);
+            vkWaitForFences(device, 1, &fence, VK_TRUE, UINT64_MAX);
+            vkResetFences(device, 1, &fence);
         }
 
         VkCommandBufferAllocateInfo allocInfo{};
@@ -337,8 +337,8 @@ private:
         submitInfo.commandBufferCount = 1;
         submitInfo.pCommandBuffers = &commandBuffer;
 
-        vkQueueSubmit(graphicsQueue, 1, &submitInfo, fence);
-        if(fence != VK_NULL_HANDLE)
+        vk_check(vkQueueSubmit(graphicsQueue, 1, &submitInfo, fence));
+        if (fence == VK_NULL_HANDLE)
             vkQueueWaitIdle(graphicsQueue);
 
         vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
@@ -944,6 +944,7 @@ private:
 
         copyBuffer(stagingBuffer, vertexBuffer, bufferSize, inFlightFences[currentFrame]);
 
+        vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
         vkDestroyBuffer(device, stagingBuffer, nullptr);
         vkFreeMemory(device, stagingBufferMemory, nullptr);
 
@@ -962,8 +963,9 @@ private:
 
         createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexBuffer, indexBufferMemory);
 
-        copyBuffer(stagingBuffer, indexBuffer, bufferSize);
+        copyBuffer(stagingBuffer, indexBuffer, bufferSize, inFlightFences[currentFrame]);
 
+        vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
         vkDestroyBuffer(device, stagingBuffer, nullptr);
         vkFreeMemory(device, stagingBufferMemory, nullptr);
     }
@@ -1017,9 +1019,7 @@ private:
                 vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
                 vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
 
-                //vkCmdDraw(commandBuffer, static_cast<uint32_t>(vertices.size()) - 1, 1, 0, 0);
                 vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(vertex_indices.size()), 1, 0, 0, 0);
-
 
             vkCmdEndRenderPass(commandBuffer);
 
