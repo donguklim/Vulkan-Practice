@@ -97,6 +97,11 @@ struct Vertex {
     }
 };
 
+struct UniformBufferObject {
+    glm::mat4 model;
+    glm::mat4 view;
+    glm::mat4 proj;
+};
 
 class HelloTriangleApplication {
 public:
@@ -198,6 +203,7 @@ private:
         createSwapChain();
         createImageViews();
         createRenderPass();
+        createDescriptorSetLayout();
         createGraphicsPipeline();
         createFramebuffers();
         createCommandPool();
@@ -699,6 +705,10 @@ private:
         
         vk_check(vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule));
         return shaderModule;
+    }
+
+    void createDescriptorSetLayout() {
+
     }
 
     void createGraphicsPipeline() {
