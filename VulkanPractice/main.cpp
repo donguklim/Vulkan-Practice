@@ -303,13 +303,7 @@ private:
         vkBindBufferMemory(device, buffer, bufferMemory, 0);
     }
 
-    void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size, VkFence fence=VK_NULL_HANDLE) {
-
-        if (fence != VK_NULL_HANDLE) {
-            vkWaitForFences(device, 1, &fence, VK_TRUE, UINT64_MAX);
-            vkResetFences(device, 1, &fence);
-        }
-
+    void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
         VkCommandBufferAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
         allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
@@ -337,9 +331,8 @@ private:
         submitInfo.commandBufferCount = 1;
         submitInfo.pCommandBuffers = &commandBuffer;
 
-        vk_check(vkQueueSubmit(graphicsQueue, 1, &submitInfo, fence));
-        if (fence == VK_NULL_HANDLE)
-            vkQueueWaitIdle(graphicsQueue);
+        vk_check(vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE));
+        vkQueueWaitIdle(graphicsQueue);
 
         vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 
@@ -942,9 +935,8 @@ private:
             vertexBufferMemory
         );
 
-        copyBuffer(stagingBuffer, vertexBuffer, bufferSize, inFlightFences[currentFrame]);
+        copyBuffer(stagingBuffer, vertexBuffer, bufferSize);
 
-        vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
         vkDestroyBuffer(device, stagingBuffer, nullptr);
         vkFreeMemory(device, stagingBufferMemory, nullptr);
 
@@ -963,9 +955,8 @@ private:
 
         createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexBuffer, indexBufferMemory);
 
-        copyBuffer(stagingBuffer, indexBuffer, bufferSize, inFlightFences[currentFrame]);
+        copyBuffer(stagingBuffer, indexBuffer, bufferSize);
 
-        vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
         vkDestroyBuffer(device, stagingBuffer, nullptr);
         vkFreeMemory(device, stagingBufferMemory, nullptr);
     }
