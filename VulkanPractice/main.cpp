@@ -194,9 +194,9 @@ private:
         createGraphicsPipeline();
         createFramebuffers();
         createCommandPool();
+        createSyncObjects();
         createVertexBuffer();
         createCommandBuffer();
-        createSyncObjects();
     }
 
     void mainLoop() {
@@ -292,7 +292,7 @@ private:
         vkBindBufferMemory(device, buffer, bufferMemory, 0);
     }
 
-    void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
+    void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size, VkFence fence=VK_NULL_HANDLE) {
         VkCommandBufferAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
         allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
@@ -320,8 +320,9 @@ private:
         submitInfo.commandBufferCount = 1;
         submitInfo.pCommandBuffers = &commandBuffer;
 
-        vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
-        vkQueueWaitIdle(graphicsQueue);
+        vkQueueSubmit(graphicsQueue, 1, &submitInfo, fence);
+        if(fence != VK_NULL_HANDLE)
+            vkQueueWaitIdle(graphicsQueue);
 
         vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 
@@ -924,7 +925,7 @@ private:
             vertexBufferMemory
         );
 
-        copyBuffer(stagingBuffer, vertexBuffer, bufferSize);
+        copyBuffer(stagingBuffer, vertexBuffer, bufferSize, inFlightFences[currentFrame]);
 
         vkDestroyBuffer(device, stagingBuffer, nullptr);
         vkFreeMemory(device, stagingBufferMemory, nullptr);
