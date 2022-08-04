@@ -15,10 +15,12 @@ target_link_libraries(${PROJECT_NAME} ${Vulkan_LIBRARIES})
 target_include_directories(${PROJECT_NAME} PUBLIC ${Vulkan_INCLUDE_DIR})
 
 
-include_directories("${GLFW_PATH}/include")
+include_directories("${GLFW_PATH}/include", "${STB_PATH}")
 
 
 target_link_libraries(VulkanPractice "${GLFW_PATH}/lib-vc2022/glfw3.lib")
+
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/textures/texture.png" "${CMAKE_CURRENT_BINARY_DIR}/textures/texture.png" COPYONLY)
 
 
 find_program(glslc_executable NAMES glslc HINTS Vulkan::glslc)

@@ -7,11 +7,12 @@
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/out/build/${presetName}",
             "installDir": "${sourceDir}/out/install/${presetName}",
-            "cacheVariables": {
-              "CMAKE_C_COMPILER": "cl.exe",
-              "CMAKE_CXX_COMPILER": "cl.exe",
-              "GLFW_PATH": "E:/cpp_projects/glfw-3.3.8.bin.WIN64"
-            },
+          "cacheVariables": {
+            "CMAKE_C_COMPILER": "cl.exe",
+            "CMAKE_CXX_COMPILER": "cl.exe",
+            "GLFW_PATH": "E:/cpp_projects/glfw-3.3.8.bin.WIN64",
+            "STB_PATH": "E:/cpp_projects/stb"
+          },
             "condition": {
                 "type": "equals",
                 "lhs": "${hostSystemName}",
