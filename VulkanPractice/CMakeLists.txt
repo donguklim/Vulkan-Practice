@@ -15,7 +15,7 @@ target_link_libraries(${PROJECT_NAME} ${Vulkan_LIBRARIES})
 target_include_directories(${PROJECT_NAME} PUBLIC ${Vulkan_INCLUDE_DIR})
 
 
-include_directories("${GLFW_PATH}/include", "${STB_PATH}")
+include_directories("${GLFW_PATH}/include", "${STB_PATH}", "${TINY_OBJ_PATH}")
 
 
 target_link_libraries(VulkanPractice "${GLFW_PATH}/lib-vc2022/glfw3.lib")
