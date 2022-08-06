@@ -2,3 +2,5 @@ CMakeUserPresets.json
 out/
 .vs/
 *.png
+models/
+textures/
