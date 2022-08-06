@@ -20,7 +20,8 @@ include_directories("${GLFW_PATH}/include", "${STB_PATH}", "${TINY_OBJ_PATH}")
 
 target_link_libraries(VulkanPractice "${GLFW_PATH}/lib-vc2022/glfw3.lib")
 
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/textures/texture.png" "${CMAKE_CURRENT_BINARY_DIR}/textures/texture.png" COPYONLY)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/models/viking_room.obj" "${CMAKE_CURRENT_BINARY_DIR}/models/viking_room.obj" COPYONLY)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/textures/viking_room.png" "${CMAKE_CURRENT_BINARY_DIR}/textures/viking_room.png" COPYONLY)
 
 
 find_program(glslc_executable NAMES glslc HINTS Vulkan::glslc)
