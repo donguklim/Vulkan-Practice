@@ -1327,7 +1327,7 @@ private:
         samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
         samplerInfo.mipLodBias = 0.0f;
         samplerInfo.minLod = 0.0f;
-        samplerInfo.maxLod = 0.0f;
+        samplerInfo.maxLod = samplerInfo.maxLod = static_cast<float>(mipLevels);
 
         vk_check(vkCreateSampler(device, &samplerInfo, nullptr, &textureSampler));
     }
