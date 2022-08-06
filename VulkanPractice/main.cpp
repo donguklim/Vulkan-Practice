@@ -1647,8 +1647,6 @@ private:
 
         createSwapChain();
         createImageViews();
-        createRenderPass();
-        createGraphicsPipeline();
         createDepthResources();
         createFramebuffers();
     }
